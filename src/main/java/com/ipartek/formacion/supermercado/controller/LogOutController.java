@@ -1,41 +1,23 @@
 package com.ipartek.formacion.supermercado.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import com.ipartek.formacion.supermercado.modelo.dao.ProductoDAO;
 import com.ipartek.formacion.supermercado.modelo.pojo.Alerta;
-import com.ipartek.formacion.supermercado.modelo.pojo.Producto;
 
 /**
- * Servlet implementation class InicioController
+ * Servlet implementation class LogOutController
  */
-@WebServlet("/inicio")
-public class InicioController extends HttpServlet {
+@WebServlet("/logout")
+public class LogOutController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static ProductoDAO dao;
-
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-
-		super.init(config);
-
-		dao = ProductoDAO.getInstance();
-	}
-
-	@Override
-	public void destroy() {
-		dao = null;
-		super.destroy();
-	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -52,11 +34,14 @@ public class InicioController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		session.removeAttribute("usuarioLogeado");
+		session.invalidate();
 
-		ArrayList<Producto> productos = (ArrayList<Producto>) dao.getAll();
-		request.setAttribute("mensajeAlerta", new Alerta(Alerta.TIPO_PRIMARY, "Los productos destacados para ti"));
-		request.setAttribute("productos", productos);
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.setAttribute("mensajeAlerta",
+				new Alerta(Alerta.TIPO_PRIMARY, "Gracias por tu visita. Hasta la próxima"));
+		request.getRequestDispatcher("login.jsp").forward(request, response);
+
 	}
 
 }
